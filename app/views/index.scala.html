@@ -1,0 +1,80 @@
+@(appsFromDB : List[String], timeLengths : List[String], appId : String, timeLength : String, timeLengthValue : Long, keysToParse : List[String])
+
+@main("Chat Statistics") {
+
+<div>
+    <!--@if(appId != null && appId.length() != 0 && timeLength != 0){-->
+    <!--}-->
+    <div id="graphdiv"></div>
+    <script type="text/javascript">
+      //graph initialization
+
+      var labelsList = [ "@keysToParse.get(0)", "@keysToParse.get(1)", "@keysToParse.get(2)", "@keysToParse.get(3)", "@keysToParse.get(4)" ]
+
+      g = new Dygraph(
+        // containing div
+        document.getElementById("graphdiv"),
+        "/resources/dataset.csv",
+        {
+            labels : labelsList,
+            title: 'Chat Statistics',
+            legend: 'always',
+            xlabel: 'Created at',
+            ylabel: 'Value',
+            visibility : [ true, true, true, true ]
+        }
+      );
+
+      function change(el) {
+        g.setVisibility(parseInt(el.id), el.checked);
+      }
+
+      function setData() {
+        document.getElementById('appId').value = '@appId';
+        document.getElementById('timeLength').value = '@timeLength';
+        if (@timeLengthValue != 1) {
+            document.getElementById('timeLengthValue').value = '@timeLengthValue';
+        }
+      }
+    </script>
+
+    <div>
+        <div id="updatediv">
+            <form action="/update-settings">
+                <table>
+                    <tr>
+                        <td align="center">Application id :
+                            <select name="appId" required="required" class="select-style" id="appId">
+                                @for(app <- appsFromDB) {
+                                <option>@app</option>
+                                }
+                            </select>
+                            Time length :
+                            <input id="timeLengthValue" name="timeLengthValue"
+                                   onclick="dropTextFieldValue()" placeholder="Insert an integer value here"/>
+                            <select name="timeLength" required="required" class="select-style" id="timeLength">
+                                @for(timeLength <- timeLengths) {
+                                <option>@timeLength</option>
+                                }
+                            </select>
+                            <button type="submit" class="myButton">UPDATE</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <input type="checkbox" id="0" checked onclick="change(this)">@keysToParse.get(1)
+                            <input type="checkbox" id="1" checked onclick="change(this)">@keysToParse.get(2)
+                            <input type="checkbox" id="2" checked onclick="change(this)">@keysToParse.get(3)
+                            <input type="checkbox" id="3" checked onclick="change(this)">@keysToParse.get(4)
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!--
+
+-->
+}
